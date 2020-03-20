@@ -24,12 +24,36 @@
             padding-right: 5%;
         }
 
-        .t{
+        .t {
             float: left;
         }
     </style>
 
     <script>
+
+        function deletar(id) {
+            console.log(id);
+            fetch('http://localhost/deletar', {
+                method: 'delete',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            }).then(function (res) {
+                return res.json();
+            });
+        }
+
+        function editar(nome, valor, id) {
+            console.log(nome, valor);
+            fetch('http://localhost/up', {
+                method: 'put',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome, valor,})
+            }).then(function (res) {
+                return res.json();
+            });
+        }
+
+
 
         function loadlist() {
 
@@ -41,16 +65,24 @@
                     out.forEach(produto => {
                         let valor = produto.valor;
                         let nome = produto.nome;
+                        ids = produto.id;
                         console.log(valor);
                         console.log(nome);
+                        console.log(ids);
                         (err => { throw err });
 
                         // let regex = /(?<valor>(?<milhao>\d\d)-(?<mil>\d\d\d)-(?<cem>\d\d\d))/
                         // let x = valor.match(regex)
-                            let x = "R$"
+                        let x = "R$"
                         // let x = (valor / 1000)
                         // console.log(x)
-                        list.innerHTML += `<div class='col-6 t'">${nome}</div> <div class='col-6 t'> ${x} ${valor}</div> `
+                        list.innerHTML += `<div class='col-2 t' id='${ids}'>${ids}</div>
+                        <div class='col-4 t'>${nome}</div> 
+                        <div class='col-4 t'> ${x} ${valor}</div> 
+                        <div class='col-2 t'> 
+                            <button type='button' class='btn btn-primary' onclick='editar(${nome} ${nome} ${ids})' id='${ids}'> Editar </button> 
+                            <button type='button' class='btn btn-danger' onclick='deletar(${ids})' id='${ids}' value='${ids} '> Deletar </button>  
+                        </div>`
                     });
                 }).catch(err => { throw err });
 
@@ -109,14 +141,36 @@
 
         <div class="container col-12" id="lista">
 
-            <div class="col-6 t">
-                Nome
+            <div class="col-2 t">
+                <label>IDs</label>
             </div>
 
-            <div class="col-6 t">
-                Valor
+            <div class="col-4 t">
+                <label> Nome </label>
             </div>
 
+            <div class="col-4 t">
+                <label> Valor </label>
+            </div>
+
+            <div class="col-2 t">
+                <label>Ações</label>
+            </div>
+
+            <!-- <div class="col-1 t">
+                <label>Atualizar</label>
+                <div class="pt-4">
+                    <label> Nome </label>
+                </div>
+                <div class="pb-4"> <input type="text" id="nome"> </div>
+                <div>
+                    <label> Valor </label>
+                </div>
+                <div> <input type="number" id="valor"> </div>
+                <div class="pt-4"> <Button type="button" class="btn btn-primary" onclick="enviar()"> Salvar</Button>
+                </div>
+
+            </div> -->
         </div>
 
 
