@@ -41,6 +41,18 @@ app.get('/listar', function (req, res) {
         });
 });
 
+app.get('/buscaPorId', function (req, res) {
+    connection.query(`select nome, valor from produtos where id = ${req.body.id}` ,
+        function (error, results, fields) {
+            if (error)
+                res.json(error);
+            else
+                res.json(results);
+            console.log('executou a busca por id!');
+        });
+});
+
+
 app.post('/enviar', function (req, res) {
     console.log(req.body)
     connection.query(`insert into produtos(nome, valor) values( '${req.body.nome} ',' ${req.body.valor} ')`,
