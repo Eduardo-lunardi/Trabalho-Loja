@@ -39,18 +39,37 @@
                 body: JSON.stringify({ id })
             }).then(function (res) {
                 return res.json();
+
             });
+            window.location.reload();
         }
 
-        function editar(nome, valor, id) {
-            console.log(nome, valor);
-            fetch('http://localhost/up', {
-                method: 'put',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nome, valor,})
-            }).then(function (res) {
-                return res.json();
-            });
+        function editar(id) {
+            console.log(id);    
+            
+            var teste = document.getElementById(id).value;
+            console.log(teste);
+            
+            var a = document.getElementById(id).value;
+            console.log(a);
+            
+
+            var valorDaDiv = $(id).text();
+            console.log(valorDaDiv);
+            
+       
+       
+            // nome = document.getElementById('ids').value
+            // console.log(nome);
+
+            // let nome = document.getElementById(ids).value
+            // fetch('http://localhost/up', {
+            //     method: 'put',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ nome, valor, })
+            // }).then(function (res) {
+            //     return res.json();
+            // });
         }
 
 
@@ -63,8 +82,8 @@
                 .then(res => res.json())
                 .then((out) => {
                     out.forEach(produto => {
-                        let valor = produto.valor;
-                        let nome = produto.nome;
+                        valor = produto.valor;
+                        nome = produto.nome;
                         ids = produto.id;
                         console.log(valor);
                         console.log(nome);
@@ -76,13 +95,18 @@
                         let x = "R$"
                         // let x = (valor / 1000)
                         // console.log(x)
-                        list.innerHTML += `<div class='col-2 t' id='${ids}'>${ids}</div>
-                        <div class='col-4 t'>${nome}</div> 
-                        <div class='col-4 t'> ${x} ${valor}</div> 
-                        <div class='col-2 t'> 
-                            <button type='button' class='btn btn-primary' onclick='editar(${nome} ${nome} ${ids})' id='${ids}'> Editar </button> 
+                        list.innerHTML += `
+                        <div class='col-lg-1'>${ids}</div>
+                        
+                        <div class='col-lg-4'> ${nome} </div>
+                        
+                        <div class='col-lg-3'> ${valor} </div>
+
+                        <div class='col-lg-4'> 
+                            <button type='button' class='btn btn-primary' onclick='editar(${ids})'> Editar </button> 
                             <button type='button' class='btn btn-danger' onclick='deletar(${ids})' id='${ids}' value='${ids} '> Deletar </button>  
-                        </div>`
+                        </div>
+                        `
                     });
                 }).catch(err => { throw err });
 
@@ -137,43 +161,25 @@
     </nav>
 
     <main>
+        <div class="row col-lg-12">
+            <div class="col-lg-10 row" id="lista">
+                <div class="col-lg-1 ">
+                    <label>IDs</label>
+                </div>
 
-
-        <div class="container col-12" id="lista">
-
-            <div class="col-2 t">
-                <label>IDs</label>
-            </div>
-
-            <div class="col-4 t">
-                <label> Nome </label>
-            </div>
-
-            <div class="col-4 t">
-                <label> Valor </label>
-            </div>
-
-            <div class="col-2 t">
-                <label>Ações</label>
-            </div>
-
-            <!-- <div class="col-1 t">
-                <label>Atualizar</label>
-                <div class="pt-4">
+                <div class="col-lg-4 ">
                     <label> Nome </label>
                 </div>
-                <div class="pb-4"> <input type="text" id="nome"> </div>
-                <div>
+
+                <div class="col-lg-3 ">
                     <label> Valor </label>
                 </div>
-                <div> <input type="number" id="valor"> </div>
-                <div class="pt-4"> <Button type="button" class="btn btn-primary" onclick="enviar()"> Salvar</Button>
+
+                <div class="col-lg-4">
+                    <label>Ações</label>
                 </div>
-
-            </div> -->
+            </div>
         </div>
-
-
     </main>
 
 </body>
