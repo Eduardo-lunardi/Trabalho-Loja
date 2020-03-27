@@ -26,10 +26,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// app.use("/", function(req, res) {
-//     res.sendFile(path.join(__dirname + '/public/'))
-// });
-
 app.get('/listar', function (req, res) {
     connection.query('select * from produtos',
         function (error, results, fields) {
@@ -41,14 +37,16 @@ app.get('/listar', function (req, res) {
         });
 });
 
-app.get('/buscaPorId', function (req, res) {
-    connection.query(`select nome, valor from produtos where id = ${req.body.id}` ,
+app.get('/buscaPorId/:id', function (req, res) {
+    let idd = req.params.id;
+    console.log(idd);
+    connection.query(`select nome, valor, id from produtos where id = ${idd}` ,
         function (error, results, fields) {
             if (error)
                 res.json(error);
             else
                 res.json(results);
-            console.log('executou a busca por id!');
+            console.log('executou a busca por id!', results);
         });
 });
 
@@ -77,14 +75,18 @@ app.delete('/deletar', function (req, res) {
         });
 });
 
-app.put('/up', function (req, res) {
-    console.log(req.body)
-    connection.query(`update produtos set nome='${req.body.nome}', valor='${req.body.valor}' where id = ${req.body.id})`,
+app.put('/up/:idup/:vup/:nup', function (req, res) {
+    let idups = req.params.idup;
+    let nomeNovo = req.params.nup;
+    let valorNovo = req.params.vup;
+    console.log(idups, nomeNovo, valorNovo);
+    
+    connection.query(`update produtos set nome='${nomeNovo}', valor='${valorNovo}' where id = ${idups})`,
         function (error, results, fields) {
             if (error)
                 res.json(error);
             else
-                res.json({ "nome": "1" });
+                res.json(results);
             console.log('Atualizado!');
         });
 });

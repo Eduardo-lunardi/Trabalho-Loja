@@ -15,18 +15,7 @@
         crossorigin="anonymous"></script>
 
     <style>
-        .arruma {
-            float: left;
-            margin-right: 50%;
-        }
 
-        .arrunav {
-            padding-right: 5%;
-        }
-
-        .t {
-            float: left;
-        }
     </style>
 
     <script>
@@ -44,40 +33,45 @@
             window.location.reload();
         }
 
-        function editar(id) {
-            console.log(id);    
-            
-            var teste = document.getElementById(id).value;
-            console.log(teste);
-            
-            var a = document.getElementById(id).value;
-            console.log(a);
-            
+        function levarDadosParaEditar(id) {
+            var ups = document.getElementById("areaDeUp")
+            fetch(`http://localhost/buscaPorId/${id}`, {
+            }).then(res => res.json())
+                .then((out) => {
+                    out.forEach(produto => {
+                        let valorup = produto.valor;
+                        let nomeup = produto.nome;
+                        let idup = produto.id;
+                        console.log(valorup, nomeup);
+                        (err => { throw err });
+                        ups.innerHTML += `
+                            <div class='col-lg-12 pb-3'> Nome </div>
+                            <input value='${nomeup}' id='nome' class='col-lg-12' > </input>
+                            <div class='col-lg-12 pb-3 pt-3'> Valor </div>
+                            <input value='${valorup}' id='valor' class='col-lg-12' > </input>
+                            <div class='col-lg-12 text-center '>    <button class='btn btn-primary ' id='buts'  onclick='fazerUp(${idup})'>Salvar</button> </div>
+                        `
 
-            var valorDaDiv = $(id).text();
-            console.log(valorDaDiv);
-            
-       
-       
-            // nome = document.getElementById('ids').value
-            // console.log(nome);
-
-            // let nome = document.getElementById(ids).value
-            // fetch('http://localhost/up', {
-            //     method: 'put',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ nome, valor, })
-            // }).then(function (res) {
-            //     return res.json();
-            // });
+                    });
+                }).catch(err => { throw err });
         }
 
-
+        function fazerUp(idup) {
+            let nup = document.getElementById("nome").value;
+            let vup = document.getElementById("valor").value;
+            console.log(nup, vup);
+            fetch(`http://localhost/up/${idup}/${nup}/${vup}`, {
+                method: 'put',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nup, vup })
+            }).then(function (res) {
+                return res.json();
+            });
+            // window.location.reload();
+        }
 
         function loadlist() {
-
             var list = document.getElementById("lista")
-
             fetch('http://localhost/listar')
                 .then(res => res.json())
                 .then((out) => {
@@ -89,21 +83,16 @@
                         console.log(nome);
                         console.log(ids);
                         (err => { throw err });
-
-                        // let regex = /(?<valor>(?<milhao>\d\d)-(?<mil>\d\d\d)-(?<cem>\d\d\d))/
-                        // let x = valor.match(regex)
                         let x = "R$"
-                        // let x = (valor / 1000)
-                        // console.log(x)
                         list.innerHTML += `
                         <div class='col-lg-1'>${ids}</div>
                         
                         <div class='col-lg-4'> ${nome} </div>
                         
-                        <div class='col-lg-3'> ${valor} </div>
+                        <div class='col-lg-3'> ${x}${valor} </div>
 
                         <div class='col-lg-4'> 
-                            <button type='button' class='btn btn-primary' onclick='editar(${ids})'> Editar </button> 
+                            <button type='button' class='btn btn-primary' onclick='levarDadosParaEditar(${ids})'> Editar </button> 
                             <button type='button' class='btn btn-danger' onclick='deletar(${ids})' id='${ids}' value='${ids} '> Deletar </button>  
                         </div>
                         `
@@ -129,7 +118,7 @@
             <ul class="navbar-nav mr-auto">
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle arruma" href="/" id="navbarDropdown" role="button"
+                    <a class="nav-link dropdown-toggle " href="/" id="navbarDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Vendas
                     </a>
@@ -179,6 +168,12 @@
                     <label>Ações</label>
                 </div>
             </div>
+
+            <div class="col-lg-2">
+                <div class="col-lg-12" id="areaDeUp">
+                </div>
+            </div>
+
         </div>
     </main>
 
