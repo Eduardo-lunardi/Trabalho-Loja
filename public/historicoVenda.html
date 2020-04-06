@@ -2,15 +2,194 @@
 
 <head>
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
 
+    <style>
+
+    </style>
+
+    <script>
+
+
+          
+
+        function buscarPeriodo() {
+            
+            let inicio = document.getElementById("dataInicial").value
+            let final = document.getElementById("datafinal").value
+
+            console.log(inicio, final);
+            
+            var listaDh = document.getElementById('dataHora')
+            var list = document.getElementById("lista")
+            fetch(`http://localhost/buscarPer/${inicio}/${final}`)
+                .then(res => res.json())
+                .then((out) => {
+                    out.forEach(itens => {
+                        let idItem = itens.id;
+                        let quant = itens.qt;
+                        let ItemValor = itens.valor_item;
+                        let idVenda = itens.vendas_id;
+                        let idPro = itens.produtos_id;
+
+                        (err => { throw err });
+                        let x = "R$"
+                        list.innerHTML += `
+                        <div class='col-lg-2'>${idItem}</div>
+                        
+                        <div class='col-lg-3'> ${quant} </div>
+                        
+                        <div class='col-lg-3'> ${x}${ItemValor} </div>
+
+                        <div class='col-lg-2'> ${idVenda} </div>
+                        
+                        <div class='col-lg-2'> ${idPro} </div>
+                        
+                        `
+                    });
+
+                    out.forEach(vendas => {
+                        let dh = vendas.data_hora;            
+                        listaDh.innerHTML += `<div class='col-lg-12'> ${dh} </div>`
+
+                    })
+                }).catch(err => { throw err });
+        }
+
+
+        function listVendas() {
+            
+            
+            var listaDh = document.getElementById('dataHora')
+            var list = document.getElementById("lista")
+            fetch('http://localhost/listarVendas')
+                .then(res => res.json())
+                .then((out) => {
+                    out.forEach(itens => {
+                        let idItem = itens.id;
+                        let quant = itens.qt;
+                        let ItemValor = itens.valor_item;
+                        let idVenda = itens.vendas_id;
+                        let idPro = itens.produtos_id;
+
+                        (err => { throw err });
+                        let x = "R$"
+                        list.innerHTML += `
+                        <div class='col-lg-2'>${idItem}</div>
+                        
+                        <div class='col-lg-3'> ${quant} </div>
+                        
+                        <div class='col-lg-3'> ${x}${ItemValor} </div>
+
+                        <div class='col-lg-2'> ${idVenda} </div>
+                        
+                        <div class='col-lg-2'> ${idPro} </div>
+                        
+                        `
+                    });
+
+                    out.forEach(vendas => {
+                        let dh = vendas.data_hora;            
+                        listaDh.innerHTML += `<div class='col-lg-12'> ${dh} </div>`
+
+                    })
+                }).catch(err => { throw err });
+
+        }
+
+    </script>
 
 </head>
 
 
+<body onload="listVendas()">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand arrunav" href="/">Crystal Shopp</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<body>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
 
-    <a>      em breve     </a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle arruma" href="/" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Vendas
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="novaVenda.html">Nova Venda</a>
+                        <!-- <a class="dropdown-item" href="novaVenda.html">Nova Venda</a> -->
+                        <a class="dropdown-item" href="historicoVenda.html">Histórico Vendas</a>
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="/" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Produto
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="novoProduto.html">Novo Produto</a>
+                        <a class="dropdown-item" href="listagemProduto.html">Listagem Produtos</a>
+
+                    </div>
+                </li>
+
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+
+    <main>
+        <div class="row col-lg-12">
+            
+            <div class="col-lg-12 text-center mt-3 mb-3">
+                <input placeholder="Data Inicial" type="date" id="dataInicial"></input>
+                <input placeholder="Data Final" type="date" id="datafinal"></input>
+                <button class="btn btn-primary" onclick="buscarPeriodo()"> Buscar </button>
+            </div>
+            
+
+            <div class="col-lg-4 " id="dataHora">
+                <label>Data Hora</label>
+            </div>
+            <div class="col-lg-8 row" id="lista">
+                <div class="col-lg-2 ">
+                    <label> Id </label>
+                </div>
+
+                <div class="col-lg-3 ">
+                    <label> Quantidade </label>
+                </div>
+
+                <div class="col-lg-3">
+                    <label>Valor do Item</label>
+                </div>
+                <div class="col-lg-2">
+                    <label>Id Venda</label>
+                </div>
+                <div class="col-lg-2">
+                    <label>Id Produto</label>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
 
 </body>
 

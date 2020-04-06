@@ -15,94 +15,70 @@
         crossorigin="anonymous"></script>
 
     <style>
-        .arruma {
-            float: left;
-            margin-right: 50%;
-        }
-
-        .arrunav {
-            padding-right: 5%;
-        }
-
-        .caixadeprocura {
-            float: left;
-        }
-
-        .ajusteItem {
+        .tamanho {
             float: left;
         }
     </style>
 
     <script>
-        function listaNoselect() {
-            var list = document.getElementById("selBox")
 
-            fetch('http://localhost/listar')
-                .then(res => res.json())
-                .then((out) => {
-                    out.forEach(produto => {
-                        let valor = produto.valor;
-                        let nome = produto.nome;
-                        let ids = produto.id;
-                        console.log(valor);
-                        console.log(nome);
-                        console.log(ids);
-                        (err => { throw err });
-                        // let x = "R$"
-
-                        list.innerHTML += `<option value="${ids}" name="${nome}">${nome}</option>`
-                        
-                    });
-                }).catch(err => { throw err });
-        }
-
-        function adicionaTabela() {
-            // debugger;
-            var nome = $("#selBox").find('option:selected').attr("name");
-            var id = $("#selBox").find('option:selected').attr("value");
-
-            nome = nome.trim();
-            
-            nome.innerHTML += ` <div class="col-sm-4 col-md-4 col-lg-2 ml-auto" id="nomes">
-                <label> ${n} </label>
-            </div>   `
-
-        }
-
-        function buscarIDeDefaQant() {
-
-            let id = document.getElementById('ids').value;
-            let quantidade = document.getElementById('quants').value;
-            console.log(id, quantidade);
-
-            fetch('http://localhost/buscaPorId', {
-                // method: 'get',
-                // headers: { 'Content-Type': 'application/json' },
-                // body: JSON.stringify({ id })
+        function gambiarra() {
+            fetch('http://localhost/cadVenda', {
+                method: 'post'
             })
-                .then(req => req.json(id))
+        }
+
+        function rest() {
+            window.location.reload();
+        }
+        function enviarVenda() {
+            let idProduto = document.getElementById('produto').value;
+            let quantidadedoProduto = document.getElementById('quant').value
+
+            fetch('http://localhost/cadastroItens', {
+                method: 'post',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idProduto, quantidadedoProduto })
+            }).then(function (res) {
+                return res.json();
+            });
+        }
+
+        function buscarProduto() {
+            let quantfinal = document.getElementById('quant').value;
+            let id = document.getElementById('produto').value;
+            let teste = document.getElementById('dados');
+
+            fetch(`http://localhost/buscaPorId/${id}`, {
+            }).then(res => res.json())
                 .then((out) => {
                     out.forEach(produto => {
-                        let valor = produto.valor;
-                        let nome = produto.nome;
-                        console.log(nome, valor);
-
+                        let valorup = produto.valor;
+                        let nomeup = produto.nome;
+                        let idup = produto.id;
                         (err => { throw err });
+
+                        teste.innerHTML += `
+                        <div id='${idup}'> 
+                        <div class="col-sm-4 col-md-4 col-lg-4 tamanho "> ${nomeup} </div>
+                        <div class='col-sm-2 col-md-3 col-lg-2  tamanho'> ${quantfinal} </div>
+                        <div class="col-sm-2 col-md-3 col-lg-2  tamanho"> ${valorup}</div>
+                        <div class="col-sm-2 col-md-3 col-lg-4  tamanho"> <button class="btn btn-danger" onClick='removerProduto(${idup})'> Remover </button></div>
+                        `
                     });
                 }).catch(err => { throw err });
         }
 
-
-
-
-
+        function removerProduto(idup) {
+            document.getElementById(idup).remove();
+        }
 
     </script>
 
 </head>
 
 
-<body onload="listaNoselect()">
+<body onload="gambiarra()">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand arrunav" href="/">Crystal Shopp</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -141,27 +117,35 @@
     </nav>
 
     <main>
-        <div class="row col-lg-12">
-            <select class="mdb-select md-form col-lg-2 ml-5" id="selBox">
-                <option value="0" name="selecione" disabled selected>Selecione</option>
-            </select>
-            <div> <button class="btn btn-success ml-2 col-lg-12" onclick="adicionaTabela()"  > Adicionar  </button>  </div>
-
-            <div class="col-sm-4 col-md-4 col-lg-2 ml-auto" id="nome_produto">
-                <label> Nome </label>
+        <div class="row col-lg-12 pt-3">
+            <div class="col-lg-4 pl-4 ">
+                <label class="col-lg-12">Quantidade </label>
+                <input type="number" placeholder="QT" min="0" class="col-lg-6 mb-3" id="quant" value="1"> </input>
+                
+                <label class="col-lg-12 pt-3"> Produtos</label>
+                <div class="col-lg-7 pt-2 mb-3 row">
+                    <input id="produto" class="col-lg-12 mb-3" type="number" min="1"> </input>
+                    <button class="btn btn-primary col-lg-6 w-50" onclick="buscarProduto() , enviarVenda() "> Adicionar
+                    </button>
+                </div>
+                <button class="btn btn-success col-lg-7 w-50" onclick="enviarVenda()"> Finalizar Compra </button>
             </div>
-            <div class="col-sm-3 col-md-3 col-lg-2" id="qtd_produto">
-                <label> Quantidade</label>
-            </div>
-            <div class="col-sm-3 col-md-3 col-lg-2" id="valor_produto">
-                <label>Valor</label>
-            </div>
-            <div class="col-sm-2 col-md-2 col-lg-2">
-                <label>Ação</label>
+            <div class="col-lg-8" id="dados">
+                <div class='col-lg-4 tamanho'>
+                    <label> Nome </label>
+                </div>
+                <div class="col-lg-2 tamanho">
+                    <label> Quantidade</label>
+                </div>
+                <div class="col-lg-2 tamanho">
+                    <label>Valor Und.</label>
+                </div>
+                <div class="col-lg-4 tamanho">
+                    <label>Ação</label>
+                </div>
             </div>
         </div>
     </main>
-
 </body>
 
 </html>

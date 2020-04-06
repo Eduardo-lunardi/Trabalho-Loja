@@ -11,7 +11,7 @@ const connection = mysql.createConnection({
     port: '3306',
     user: 'root',
     password: '',
-    database: 'loja',
+    database: 'mydb',
 });
 
 connection.connect(function (err) {
@@ -37,6 +37,40 @@ app.get('/listar', function (req, res) {
         });
 });
 
+
+
+
+app.get('/listarVendas', function (req, res) {
+    connection.query('select vendas.data_hora, itens.* from vendas inner join itens',
+        function (error, results, fields) {
+            if (error)
+                res.json(error);
+            else
+                res.json(results);
+            console.log('executou a listagem de vendas!');
+        });
+});
+
+
+
+app.get('/buscarPer/:inicio/:final', function (req, res) {
+    let i = req.params.inicio
+let f = req.params.final
+    connection.query(`select vendas.data_hora, itens.* from vendas
+    join itens 
+    WHERE  vendas.data_hora >= date('${i}')
+      AND  vendas.data_hora <= date('${f}')
+      group by itens.id` ,
+        function (error, results, fields) {
+            if (error)
+                res.json(error);
+            else
+                res.json(results);
+            console.log('executou a busca por periodo!', results);
+        });
+});
+
+
 app.get('/buscaPorId/:id', function (req, res) {
     let idd = req.params.id;
     console.log(idd);
@@ -50,6 +84,26 @@ app.get('/buscaPorId/:id', function (req, res) {
         });
 });
 
+
+app.post('/cadVenda', function (req, res) {
+    connection.query(`insert into vendas(data_hora) values (now())` ,
+        function (error, results, fields) {
+            if (error)
+                res.json(error);
+            else
+            console.log('Venda Cadastrada!');
+        });
+});
+
+app.post('/cadastroItens', function (req, res) {
+    connection.query(`insert into itens(qt, vendas_id, produtos_id) values(${req.body.quantidadedoProduto}, LAST_INSERT_ID(), ${req.body.idProduto})` ,
+        function (error, results, fields) {
+            if (error)
+                res.json(error);
+            else
+            console.log('Itens!');
+        });
+});
 
 app.post('/enviar', function (req, res) {
     console.log(req.body)
@@ -75,13 +129,13 @@ app.delete('/deletar', function (req, res) {
         });
 });
 
-app.put('/up/:idup/:vup/:nup', function (req, res) {
+app.put('/up/:idup/:nup/:vup', function (req, res) {
     let idups = req.params.idup;
     let nomeNovo = req.params.nup;
     let valorNovo = req.params.vup;
     console.log(idups, nomeNovo, valorNovo);
     
-    connection.query(`update produtos set nome='${nomeNovo}', valor='${valorNovo}' where id = ${idups})`,
+    connection.query(`update produtos set nome='${nomeNovo}', valor='${valorNovo}' where id=${idups}`,
         function (error, results, fields) {
             if (error)
                 res.json(error);
